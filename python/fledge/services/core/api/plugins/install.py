@@ -267,10 +267,9 @@ def copy_file_install_requirement(dir_files: list, plugin_type: str, file_name: 
 
 def install_package_from_repo(name: str, pkg_mgt: str, version: str) -> tuple:
     _LOGGER.exception("called install_package_from_repo...")
-    # stdout_file_path = common.create_log_file(action="install", plugin_name=name)
-    # link = "log/" + stdout_file_path.split("/")[-1]
+    stdout_file_path = common.create_log_file(action="install", plugin_name=name)
+    link = "log/" + stdout_file_path.split("/")[-1]
     msg = "installed"
-    link = ''
     # cat = await check_upgrade_on_install()
     # upgrade_install_cat_item = cat["upgradeOnInstall"]
     # max_upgrade_cat_item = cat['maxUpdate']
@@ -296,8 +295,8 @@ def install_package_from_repo(name: str, pkg_mgt: str, version: str) -> tuple:
     cmd = "sudo {} -y install {}".format(pkg_mgt, name)
     if version:
         cmd = "sudo {} -y install {}={}".format(pkg_mgt, name, version)
-    ret_code = os.system(cmd)
-    _LOGGER.exception("=========x.", ret_code, cmd)
+    ret_code = os.system(cmd + " >> {} 2>&1".format(stdout_file_path))
+    _LOGGER.exception("=========%s. %s %s %s",msg, ret_code, link, cmd)
     return ret_code, link, msg
 
 
